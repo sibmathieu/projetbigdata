@@ -1,0 +1,35 @@
+from googleapiclient.discovery import build             #Permet de simplifier la récupération des données sur Python et accéder aux API
+from googleapiclient.errors import HttpError            #Classe qui relève s'il y a une erreur HTTP
+from oauth2client.tools import argparser                #Faciliter le processus d'authentification
+
+
+DEVELOPER_KEY = 'AIzaSyAwqUXgS03FRDEmmT6tCo7jGQeX0nNDZpw'
+YOUTUBE_API_SERVICE_NAME = 'youtube'
+YOUTUBE_API_VERSION = 'v3'
+
+youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
+    developerKey=DEVELOPER_KEY)
+
+video_id = 'b-BtgBLSRec'
+try:
+    video_response = youtube.videos().list(
+        id=video_id,
+        part='snippet,statistics'       #Récupération des données de la vidéo : infos générales avec Snippet et les Stats avec Statistics
+    ).execute()
+
+    # Affichez les statistiques de la vidéo
+    statistics = video_response['items'][0]['statistics']
+    print(f"Nombre de vues : {statistics['viewCount']}")
+    print(f"Nombre de likes : {statistics['likeCount']}")
+    print(f"Nombre de dislikes : {statistics['dislikeCount']}")
+    print(f"Nombre de commentaires : {statistics['commentCount']}")
+    
+
+    #Afficher les infos générales de la vidéo
+    snippet = video_response['items'][0]['snippet']
+    print(f"Nombre de partages : {snippet['shareCount']}")
+
+
+
+except HttpError as e:
+    print('Une erreur est survenue : ', e)
